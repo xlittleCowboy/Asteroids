@@ -2,6 +2,13 @@
 
 #include <iostream>
 
+void Bullet::DeleteBullet(int index)
+{
+	delete bullets[index];
+	bullets[index] = nullptr;
+	bullets.erase(bullets.begin() + index);
+}
+
 Bullet::Bullet(sf::Vector2f direction, sf::Vector2f startPosition)
 {
 	texture.loadFromFile("Resources/Bullet.png");
@@ -22,6 +29,21 @@ Bullet::Bullet(sf::Vector2f direction, sf::Vector2f startPosition)
 	bullets.push_back(this);
 }
 
+void Bullet::AsteroidCollision()
+{
+	for (int i = 0; i < Asteroid::GetAsteroids().size(); i++)
+	{
+		for (int j = 0; j < bullets.size(); j++)
+		{
+			if (bullets[j]->sprite.getGlobalBounds().intersects(Asteroid::GetAsteroids()[i]->GetSprite().getGlobalBounds()))
+			{
+				Asteroid::DeleteAsteroid(i);
+				DeleteBullet(j);
+			}
+		}
+	}
+}
+
 void Bullet::MoveBullets()
 {
 	for (int i = 0; i < bullets.size(); i++)
@@ -29,9 +51,7 @@ void Bullet::MoveBullets()
 		bullets[i]->timeAlive -= General::GetDeltaTime();
 		if (bullets[i]->timeAlive <= 0)
 		{
-			delete bullets[i];
-			bullets[i] = nullptr;
-			bullets.erase(bullets.begin() + i);
+			DeleteBullet(i);
 		}
 		else
 		{

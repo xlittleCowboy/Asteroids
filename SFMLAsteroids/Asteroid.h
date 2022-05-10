@@ -16,8 +16,13 @@ private:
 
 	static std::vector<Asteroid*> asteroids;
 
+
 public:
 	Asteroid(sf::Vector2f startPosition, sf::Vector2f direction);
+
+	static void DeleteAsteroid(int index);
+	static std::vector<Asteroid*>& GetAsteroids();
+	sf::Sprite& GetSprite();
 
 	static void MoveAsteroids();
 };

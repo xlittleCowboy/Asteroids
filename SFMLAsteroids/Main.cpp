@@ -28,7 +28,7 @@ int main()
     General::window.setVerticalSyncEnabled(true);
 
     Ship ship(General::windowWidth / 2, General::windowHeight / 2);
-    Asteroid asteroid(sf::Vector2f(500.0f, 500.0f), sf::Vector2f(1.23f, -3.41f));
+    Asteroid* asteroid = new Asteroid(sf::Vector2f(500.0f, 500.0f), sf::Vector2f(1.23f, -3.41f));
 
     while (General::window.isOpen())
     {
@@ -73,6 +73,7 @@ int main()
 
         Bullet::MoveBullets();
         Asteroid::MoveAsteroids();
+        Bullet::AsteroidCollision();
 
         General::window.display();
 
