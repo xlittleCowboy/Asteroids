@@ -15,22 +15,11 @@ Ship::Ship(int startX, int startY)
 {
 	texture.loadFromFile("Resources/Ship.png");
 	sprite.setTexture(texture);
-	General::sprites.push_back(&sprite);
 
-	sprite.setPosition(startX, startY);
+	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
 
-	int x = sprite.getLocalBounds().width / 2;
-	int y = sprite.getLocalBounds().height / 2;
-	sprite.setOrigin(sf::Vector2f(x, y));
-
-	velocity.x = 0;
-	velocity.y = 0;
-	speed = 10.0f;
+	Reset(startX, startY);
 	maxSpeed = 1000.0f;
-
-	//std::cout << General::sprites.size() << std::endl;
-	//Bullet* bullet = new Bullet(GetForwardVector(), sprite.getPosition() + GetForwardVector());
-	//std::cout << General::sprites.size() << std::endl;
 }
 
 void Ship::Move()
@@ -65,20 +54,33 @@ void Ship::Rotate(float angle)
 	sprite.rotate(angle * General::GetDeltaTime());
 }
 
-void Ship::Shoot()
+void Ship::Shoot() 
 {
 	Bullet* bullet = new Bullet(GetForwardVector(), sprite.getPosition() + GetForwardVector() * sprite.getLocalBounds().height / 2.0f);
 }
 
-void Ship::BorderTeleport(int width, int height)
+void Ship::Reset(int startX, int startY)
 {
-	if (sprite.getPosition().x + sprite.getLocalBounds().width / 2 <= 0)
-		sprite.setPosition(width, sprite.getPosition().y);
-	if (sprite.getPosition().x - sprite.getLocalBounds().width / 2 >= width)
-		sprite.setPosition(0, sprite.getPosition().y);
+	sprite.setPosition(startX, startY);
+	sprite.setRotation(0);
 
-	if (sprite.getPosition().y - sprite.getLocalBounds().height / 2 >= height)
-		sprite.setPosition(sprite.getPosition().x, 0);
-	if (sprite.getPosition().y + sprite.getLocalBounds().height / 2 <= 0)
-		sprite.setPosition(sprite.getPosition().x, height);
+	velocity.x = 0;
+	velocity.y = 0;
+	speed = 10.0f;
+}
+
+void Ship::LossCheck()
+{
+	for (int i = 0; i < Asteroid::GetAsteroids().size(); i++)
+	{
+		if (sprite.getGlobalBounds().intersects(Asteroid::GetAsteroids()[i]->GetSprite().getGlobalBounds()))
+		{
+			Loss::isLoss = true;
+		}
+	}
+}
+
+sf::Sprite& Ship::GetSprite()
+{
+	return sprite;
 }

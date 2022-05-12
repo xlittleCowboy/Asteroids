@@ -4,6 +4,7 @@
 
 #include "General.h"
 #include "Bullet.h"
+#include "Loss.h"
 
 class Ship
 {
@@ -23,6 +24,10 @@ public:
 	void Rotate(float angle);
 	void Shoot();
 
-	void BorderTeleport(int width, int height);
+	void Reset(int startX, int startY);
+
+	void LossCheck();
+
+	sf::Sprite& GetSprite();
 };
 

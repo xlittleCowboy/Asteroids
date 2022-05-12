@@ -14,10 +14,7 @@ Bullet::Bullet(sf::Vector2f direction, sf::Vector2f startPosition)
 	texture.loadFromFile("Resources/Bullet.png");
 	sprite.setTexture(texture);
 
-
-	int x = sprite.getLocalBounds().width / 2;
-	int y = sprite.getLocalBounds().height / 2;
-	sprite.setOrigin(sf::Vector2f(x, y));
+	sprite.setOrigin(sprite.getLocalBounds().width / 2, sprite.getLocalBounds().height / 2);
 
 	sprite.setPosition(startPosition);
 
@@ -37,7 +34,7 @@ void Bullet::AsteroidCollision()
 		{
 			if (bullets[j]->sprite.getGlobalBounds().intersects(Asteroid::GetAsteroids()[i]->GetSprite().getGlobalBounds()))
 			{
-				Asteroid::DeleteAsteroid(i);
+				Asteroid::DeleteAsteroid(i, false);
 				DeleteBullet(j);
 			}
 		}

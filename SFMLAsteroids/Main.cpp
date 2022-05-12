@@ -4,13 +4,12 @@
 #include "General.h"
 #include "Bullet.h"
 #include "Asteroid.h"
+#include "Loss.h"
 
 #include <iostream>
 
 sf::Clock General::clock;
 float General::deltaTime;
-
-std::vector<sf::Sprite*> General::sprites;
 
 std::vector<Bullet*> Bullet::bullets;
 
@@ -20,6 +19,13 @@ int General::windowHeight;
 
 std::vector<Asteroid*> Asteroid::asteroids;
 
+sf::Font Loss::font;
+sf::Text Loss::text;
+
+int Loss::fontSize;
+sf::Color Loss::color;
+bool Loss::isLoss = false;
+
 int main()
 {
     General::windowWidth = sf::VideoMode::getDesktopMode().width;
@@ -27,8 +33,11 @@ int main()
     General::window.create(sf::VideoMode::getDesktopMode(), "Asteroids!", sf::Style::Fullscreen);
     General::window.setVerticalSyncEnabled(true);
 
-    Ship ship(General::windowWidth / 2, General::windowHeight / 2);
-    Asteroid* asteroid = new Asteroid(sf::Vector2f(500.0f, 500.0f), sf::Vector2f(1.23f, -3.41f));
+    Ship* ship = new Ship(General::windowWidth / 2, General::windowHeight / 2);
+
+    Asteroid::SpawnAsteroids(5);
+
+    Loss::InitializeLoss();
 
     while (General::window.isOpen())
     {
@@ -40,9 +49,9 @@ int main()
 
             if (event.type == sf::Event::KeyPressed)
             {
-                if (event.key.code == sf::Keyboard::Space)
+                if (event.key.code == sf::Keyboard::Space && !Loss::isLoss)
                 {
-                    ship.Shoot();
+                    ship->Shoot();
                 }
             }
         }
@@ -52,28 +61,32 @@ int main()
             General::window.close();
         }
 
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
-        {
-            ship.Rotate(360);
-        }
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
-        {
-            ship.Rotate(-360);
-        }
-
-        if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
-        {
-            //ship.Shoot();
-        }
-
         General::window.clear();
 
-        ship.Move();
-        ship.BorderTeleport(General::windowWidth, General::windowHeight);
+        if (!Loss::isLoss)
+        {
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
+            {
+                ship->Rotate(360);
+            }
+            if (sf::Keyboard::isKeyPressed(sf::Keyboard::A))
+            {
+                ship->Rotate(-360);
+            }
 
-        Bullet::MoveBullets();
-        Asteroid::MoveAsteroids();
-        Bullet::AsteroidCollision();
+            ship->Move();
+            General::BorderTeleport(ship->GetSprite());
+
+            Bullet::MoveBullets();
+            Asteroid::MoveAsteroids();
+            Bullet::AsteroidCollision();
+
+            ship->LossCheck();
+        }
+        else
+        {
+            Loss::Restart(*ship);
+        }
 
         General::window.display();
 

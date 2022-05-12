@@ -15,9 +15,9 @@ public:
 
 	static float GetVectorLenght(sf::Vector2f vector);
 
-	static std::vector<sf::Sprite*> sprites;
-
 	static sf::RenderWindow window;
 	static int windowWidth, windowHeight;
+
+	static void BorderTeleport(sf::Sprite& sprite);
 };
 
